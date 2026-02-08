@@ -34,18 +34,16 @@ A minimal Android expense tracker app built with React Native (Expo) and Firebas
 
 ### Prerequisites
 - [Node.js](https://nodejs.org/) (v18+)
-- [Expo CLI](https://docs.expo.dev/get-started/installation/)
-- Android device or emulator with [Expo Go](https://expo.dev/client)
+- [Android Studio](https://developer.android.com/studio) (Ladybug or later recommended)
+- Android SDK (installed via Android Studio)
+- Android device or emulator
 
 ### Installation
 
 ```bash
 cd ExpenseTracker
 npm install
-npx expo start
 ```
-
-Scan the QR code with Expo Go on your Android device to run the app.
 
 ### Firebase Setup (Optional — for multi-device sync)
 
@@ -71,17 +69,30 @@ Without Firebase, the app works in **local-only mode** with data persisted on de
 
 ## Building for Android
 
-This project is built with **React Native (Expo)**, not Android Studio. However, it fully supports Android and can be built into a standalone APK or AAB for distribution.
+This project includes a pre-generated native `android/` directory, so it can be opened directly in Android Studio.
 
-### Run on Android Device/Emulator (Development)
+### Open in Android Studio
+
+1. Open Android Studio
+2. Select **File → Open** and navigate to `ExpenseTracker/android`
+3. Let Android Studio sync Gradle and download dependencies
+4. Connect an Android device or start an emulator
+5. Start the Metro bundler in a terminal:
+   ```bash
+   cd ExpenseTracker
+   npm start
+   ```
+6. Click **Run ▶** in Android Studio to build and launch the app
+
+### Run from Command Line
+
+You can also build and run the Android app directly from the command line:
 
 ```bash
 cd ExpenseTracker
 npm install
-npx expo start --android
+npx expo run:android
 ```
-
-Or scan the QR code with [Expo Go](https://expo.dev/client) on your Android device.
 
 ### Build a Standalone APK/AAB (Production)
 
@@ -95,15 +106,15 @@ eas build --platform android
 
 This produces a signed `.aab` (Android App Bundle) for Google Play, or an `.apk` for direct installation.
 
-### Open in Android Studio
+### Regenerating the Native Project
 
-If you need to work with native Android code or open the project in Android Studio, generate the native `android/` directory:
+If you modify `app.json` or add native dependencies, regenerate the Android project:
 
 ```bash
-npx expo prebuild --platform android
+npx expo prebuild --platform android --clean
 ```
 
-Then open the generated `android/` folder in Android Studio. This gives you a standard Gradle-based Android project while keeping all the React Native/Expo functionality.
+Then re-open the `android/` folder in Android Studio.
 
 ## Tech Stack
 
