@@ -69,6 +69,42 @@ Example Firebase config:
 
 Without Firebase, the app works in **local-only mode** with data persisted on device via AsyncStorage.
 
+## Building for Android
+
+This project is built with **React Native (Expo)**, not Android Studio. However, it fully supports Android and can be built into a standalone APK or AAB for distribution.
+
+### Run on Android Device/Emulator (Development)
+
+```bash
+cd ExpenseTracker
+npm install
+npx expo start --android
+```
+
+Or scan the QR code with [Expo Go](https://expo.dev/client) on your Android device.
+
+### Build a Standalone APK/AAB (Production)
+
+Use [EAS Build](https://docs.expo.dev/build/introduction/) to create a production Android binary:
+
+```bash
+npm install -g eas-cli
+eas login
+eas build --platform android
+```
+
+This produces a signed `.aab` (Android App Bundle) for Google Play, or an `.apk` for direct installation.
+
+### Open in Android Studio
+
+If you need to work with native Android code or open the project in Android Studio, generate the native `android/` directory:
+
+```bash
+npx expo prebuild --platform android
+```
+
+Then open the generated `android/` folder in Android Studio. This gives you a standard Gradle-based Android project while keeping all the React Native/Expo functionality.
+
 ## Tech Stack
 
 - **React Native** (Expo) — Cross-platform mobile framework
