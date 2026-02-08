@@ -33,26 +33,114 @@ A minimal Android expense tracker app built with React Native (Expo) and Firebas
 ## Getting Started
 
 ### Prerequisites
-- [Node.js](https://nodejs.org/) (v18+)
-- [Android Studio](https://developer.android.com/studio) (Ladybug or later recommended)
-- Android SDK (installed via Android Studio)
-- Android device or emulator
 
-### Installation
+| Tool | Version | Download |
+|------|---------|----------|
+| Node.js | v18 or later | [nodejs.org](https://nodejs.org/) |
+| Android Studio | Ladybug (2024.2) or later | [developer.android.com/studio](https://developer.android.com/studio) |
+| JDK | 17 (bundled with Android Studio) | Included with Android Studio |
+| Git | Any recent version | [git-scm.com](https://git-scm.com/) |
+
+### Step 1 — Install and Configure Android Studio
+
+1. Download and install [Android Studio](https://developer.android.com/studio).
+2. On the welcome screen, click **More Actions → SDK Manager** (or open **Settings → Languages & Frameworks → Android SDK** from an existing project).
+3. Under the **SDK Platforms** tab, check **Android 15 (VanillaIceCream)** (API 35) and click **Apply**.
+4. Switch to the **SDK Tools** tab and ensure the following are checked:
+   - **Android SDK Build-Tools**
+   - **Android SDK Command-line Tools**
+   - **Android Emulator**
+   - **Android SDK Platform-Tools**
+5. Click **Apply / OK** to install the selected components.
+6. Note the **Android SDK Location** shown at the top of the SDK Manager (e.g. `~/Android/Sdk` on Linux/macOS, `%LOCALAPPDATA%\Android\Sdk` on Windows) — you will need it in the next step.
+
+### Step 2 — Set Environment Variables
+
+Add the following to your shell profile (`~/.bashrc`, `~/.zshrc`, or equivalent):
 
 ```bash
-cd ExpenseTracker
+export ANDROID_HOME=$HOME/Android/Sdk   # adjust if your SDK is elsewhere
+export PATH=$PATH:$ANDROID_HOME/emulator
+export PATH=$PATH:$ANDROID_HOME/platform-tools
+```
+
+Reload your shell (`source ~/.bashrc`) or open a new terminal.
+
+> **Windows:** Set `ANDROID_HOME` as a system environment variable and add `%ANDROID_HOME%\emulator` and `%ANDROID_HOME%\platform-tools` to your `Path`.
+
+Verify the setup:
+
+```bash
+adb --version    # should print the ADB version
+```
+
+### Step 3 — Set Up an Android Emulator
+
+1. In Android Studio, open **More Actions → Virtual Device Manager** (or **Tools → Device Manager** from a project).
+2. Click **Create Virtual Device**.
+3. Choose a device (e.g. **Pixel 7**) and click **Next**.
+4. Select a system image — pick the latest available for **API 35** and click **Download** if needed, then **Next**.
+5. Give the AVD a name and click **Finish**.
+6. Start the emulator by clicking the ▶ button next to it.
+
+> **Tip:** You can also use a physical Android device. Enable **Developer Options → USB Debugging** on the device, connect via USB, and run `adb devices` to confirm it is detected.
+
+### Step 4 — Clone and Install Dependencies
+
+```bash
+git clone https://github.com/aaaaaaayush-no/Notes.git
+cd Notes/ExpenseTracker
 npm install
 ```
 
+### Step 5 — Open the Project in Android Studio
+
+This project includes a pre-generated native `android/` directory, so it can be opened directly.
+
+1. Open Android Studio.
+2. Select **File → Open** (or **Open** on the welcome screen).
+3. Navigate to the `ExpenseTracker/android` folder inside the cloned repo and click **OK**.
+4. Android Studio will start a **Gradle sync** — wait for it to finish (progress is shown in the bottom status bar). The first sync may take several minutes while dependencies are downloaded.
+5. If prompted to update the Gradle plugin or wrapper, click **Don't remind me again** — the versions are managed by Expo and should not be changed.
+
+### Step 6 — Run the App from Android Studio
+
+You need **two things running**: the Metro bundler (serves the JavaScript bundle) and Android Studio (builds and installs the native shell).
+
+1. **Start Metro** — Open a terminal and run:
+   ```bash
+   cd Notes/ExpenseTracker
+   npm start
+   ```
+   Leave this terminal open. You should see the Metro dev menu.
+
+2. **Select a device** — In the Android Studio toolbar, open the device dropdown and pick your emulator or connected device.
+
+3. **Click Run ▶** — Android Studio will build the native project, install the APK, and launch the app. On first build this can take 5–10 minutes.
+
+The app should open on your device/emulator and connect to the Metro bundler automatically.
+
+### Alternative: Run from the Command Line (without Android Studio UI)
+
+If you prefer not to use the Android Studio GUI to run the app:
+
+```bash
+cd Notes/ExpenseTracker
+npm install
+npx expo run:android
+```
+
+This will build the native project, start Metro, install the APK, and launch the app in one step.
+
 ### Firebase Setup (Optional — for multi-device sync)
 
-1. Create a project at [Firebase Console](https://console.firebase.google.com/)
-2. Enable **Realtime Database** and set rules to allow read/write
-3. Copy your Firebase config object
-4. Paste the config JSON in the app's setup screen under "Show Firebase Config"
+Firebase enables real-time expense syncing across multiple devices. Without it, the app works in **local-only mode** with data persisted on-device via AsyncStorage.
 
-Example Firebase config:
+1. Create a project at [Firebase Console](https://console.firebase.google.com/).
+2. Enable **Realtime Database** and set rules to allow read/write.
+3. Copy your Firebase config object.
+4. In the app, open **Settings → Show Firebase Config** and paste the config JSON:
+
 ```json
 {
   "apiKey": "AIza...",
@@ -63,35 +151,6 @@ Example Firebase config:
   "messagingSenderId": "123456789",
   "appId": "1:123456789:web:abc123"
 }
-```
-
-Without Firebase, the app works in **local-only mode** with data persisted on device via AsyncStorage.
-
-## Building for Android
-
-This project includes a pre-generated native `android/` directory, so it can be opened directly in Android Studio.
-
-### Open in Android Studio
-
-1. Open Android Studio
-2. Select **File → Open** and navigate to `ExpenseTracker/android`
-3. Let Android Studio sync Gradle and download dependencies
-4. Connect an Android device or start an emulator
-5. Start the Metro bundler in a terminal:
-   ```bash
-   cd ExpenseTracker
-   npm start
-   ```
-6. Click **Run ▶** in Android Studio to build and launch the app
-
-### Run from Command Line
-
-You can also build and run the Android app directly from the command line:
-
-```bash
-cd ExpenseTracker
-npm install
-npx expo run:android
 ```
 
 ### Build a Standalone APK/AAB (Production)
@@ -115,6 +174,19 @@ npx expo prebuild --platform android --clean
 ```
 
 Then re-open the `android/` folder in Android Studio.
+
+## Troubleshooting
+
+| Problem | Solution |
+|---------|----------|
+| **Gradle sync fails with "SDK not found"** | Make sure `ANDROID_HOME` is set correctly and the required SDK platforms/tools are installed via the SDK Manager. |
+| **`adb: command not found`** | Add `$ANDROID_HOME/platform-tools` to your `PATH` (see Step 2). |
+| **Metro bundler not reachable on emulator** | Run `adb reverse tcp:8081 tcp:8081` to forward the port, then reload the app. |
+| **Build error: "Could not determine the dependencies of task ':app:compileDebugJavaWithJavac'"** | Run `cd android && ./gradlew clean` then try building again. |
+| **"Unable to load script" red screen** | Ensure Metro is running (`npm start`) before pressing Run in Android Studio. |
+| **Emulator is slow** | Enable hardware acceleration — check **SDK Manager → SDK Tools → Intel HAXM** (Intel) or use the built-in HVF/KVM acceleration on Apple Silicon/Linux. |
+| **Build succeeds but app crashes on launch** | Check `adb logcat` output for errors. Common cause: missing environment variables or mismatched SDK versions. |
+| **"Deprecated Gradle features" warnings** | These warnings are cosmetic and can be ignored. Do not change the Gradle wrapper or plugin version — they are managed by Expo. |
 
 ## Tech Stack
 
